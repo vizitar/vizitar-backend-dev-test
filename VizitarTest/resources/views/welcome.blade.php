@@ -21,7 +21,7 @@
                 <p>TO DO LIST</p>
 
                 <form method="post" action="{{ route('saveItem') }}" accept-charset="UTF-8">
-                    {{ csrf_field() }}
+                    {{ csrf_field() }} {{-- provides additional layer of security against CSRF attacks --}}
 
                     <label for="listItem">Insert new item:</label>
                     </br>

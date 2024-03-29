@@ -21,26 +21,6 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::prefix('customers')->group(function () {
-    Route::get('/', [CustomerController::class, 'index']);
-    Route::post('/', [CustomerController::class, 'save']);
-    Route::get('/{customer}', [CustomerController::class, 'show']);
-    Route::put('/{customer}', [CustomerController::class, 'update']);
-    Route::delete('/{customer}', [CustomerController::class, 'delete']);
-})->name('customers');
-
-Route::prefix('products')->group(function () {
-    Route::get('/', [ProductController::class, 'index']);
-    Route::post('/', [ProductController::class, 'save']);
-    Route::get('/{product}', [ProductController::class, 'show']);
-    Route::put('/{product}', [ProductController::class, 'update']);
-    Route::delete('/{product}', [ProductController::class, 'delete']);
-})->name('products');
-
-Route::prefix('purchase_orders')->group(function () {
-    Route::get('/', [PurchaseOrderController::class, 'index']);
-    Route::post('/', [PurchaseOrderController::class, 'save']);
-    Route::get('/{purchase_order}', [PurchaseOrderController::class, 'show']);
-    Route::put('/{purchase_order}', [PurchaseOrderController::class, 'update']);
-    Route::delete('/{purchase_order}', [PurchaseOrderController::class, 'delete']);
-})->name('purchase_orders');
+Route::resource('customers', CustomerController::class);
+Route::resource('products', ProductController::class);
+Route::resource('purchase-orders', PurchaseOrderController::class);
