@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Customer;
-use App\Models\Product;
 use App\Models\PurchaseOrder;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,15 +15,24 @@ class PurchaseOrderSeeder extends Seeder
     public function run(): void
     {
         $customers = Customer::all();
+        $purchaseOrders = PurchaseOrder::all();
 
-        // Iterate through each customer
-        $customers->each(function (Customer $customer) {
-            // Generate fake purchase orders for each customer
-            $customer->purchaseOrders()->saveMany(PurchaseOrder::factory(5)->make()->each(function ($order) {
+        //Iterate through each customer
+        foreach ($customers as $customer){
+            $purchaseOrders = PurchaseOrder::factory(5)->make(); //create fake purchase orders
+
+            $customer->purchaseOrders()->saveMany($purchaseOrders);
+
+            foreach ($purchaseOrders as $purchaseOrder){
+
+
+            }
+        }
+            /*->each(function ($order) {
                 // Attach products to each purchase order
                 $products = Product::inRandomOrder()->limit(rand(1, 5))->get();
                 $order->products()->attach($products->pluck('id'), ['quantity' => rand(1, 10)]);
-            }));
-        });
+            }));*/
+
     }
 }

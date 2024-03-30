@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -10,9 +11,10 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        return Customer::all();
+        $customers = Customer::query()->paginate(10);
+        return response()->json($customers);
     }
 
     /**
@@ -20,14 +22,23 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //
+        //DOES NOT APPLY
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        $customer = Customer::query()->create($validatedData);
+
+        return response()->json($customer, 201);
     }
 
     /**
@@ -35,30 +46,31 @@ class CustomerController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        // NO NEED
+        //DOES NOT APPLY
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Customer $customer): JsonResponse
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email,' . $customer->id, // Ignore current customer's email
+            'address' => 'string|max:255',
+        ]);
+
+        $customer->update($validatedData);
+
+        return response()->json($customer);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Customer $customer): JsonResponse
     {
-        //
+        $customer->delete();
+        return response()->json(null, 204);
     }
 }

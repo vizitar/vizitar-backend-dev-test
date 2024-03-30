@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PurchaseOrder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class PurchaseOrderController extends Controller
@@ -9,9 +11,10 @@ class PurchaseOrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
+        $customers = PurchaseOrder::query()->paginate(10);
+        return response()->json($customers);
     }
 
     /**
@@ -19,15 +22,23 @@ class PurchaseOrderController extends Controller
      */
     public function create()
     {
-        //
+        //DOES NOT APPLY
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
-        //
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email',
+            'address' => 'nullable|string|max:255',
+        ]);
+
+        $purchaseOrder = PurchaseOrder::query()->create($validatedData);
+
+        return response()->json($purchaseOrder, 201);
     }
 
     /**
@@ -35,30 +46,31 @@ class PurchaseOrderController extends Controller
      */
     public function show(string $id)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
+        //DOES NOT APPLY
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, PurchaseOrder $purchaseOrder)
     {
-        //
+        $validatedData = $request->validate([
+            'customer_id' => 'required|exists:customers,id',
+            'status' => 'required|in:Open,Paid,Canceled',
+            'quantity' => 'required|integer|min:1|max:20',
+        ]);
+
+        $purchaseOrder->update($validatedData);
+
+        return response()->json($purchaseOrder);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(PurchaseOrder $purchaseOrder): JsonResponse
     {
-        //
+        $purchaseOrder->delete();
+        return response()->json(null, 204);
     }
 }
