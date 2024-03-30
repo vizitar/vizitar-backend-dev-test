@@ -14,6 +14,6 @@ class Product extends Model
 
     public function purchaseOrders(): BelongsToMany
     {
-        return $this->belongsToMany(PurchaseOrder::class);
+        return $this->belongsToMany(PurchaseOrder::class)->using(PurchaseOrderItem::class);
     }
 }

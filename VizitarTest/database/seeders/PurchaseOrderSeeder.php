@@ -24,7 +24,7 @@ class PurchaseOrderSeeder extends Seeder
             $customer->purchaseOrders()->saveMany($purchaseOrders);
 
             foreach ($purchaseOrders as $purchaseOrder){
-
+                //TODO pivot table seeder logic
 
             }
         }

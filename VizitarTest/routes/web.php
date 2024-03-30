@@ -18,5 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-/*Route::post('/saveItemRoute', [TodoListController::class, 'saveItem'])
-    ->name('saveItem');*/
+//Created for testing purposes
+Route::post('/saveItemRoute', [TodoListController::class, 'saveItem'])
+    ->name('saveItem');

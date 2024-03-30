@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
@@ -22,7 +23,7 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        //DOES NOT APPLY
+        //DOES NOT APPLY TO JSON API
     }
 
     /**
@@ -30,13 +31,24 @@ class CustomerController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
-        $validatedData = $request->validate([
+        $validationRules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:customers,email',
             'address' => 'nullable|string|max:255',
-        ]);
+        ];
 
-        $customer = Customer::query()->create($validatedData);
+        //Validate the request data
+        $validator = Validator::make($request->all(), $validationRules);
+
+        //If validation fails, returns JSON with error
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $customer = Customer::query()->create($request->all());
 
         return response()->json($customer, 201);
     }
@@ -46,21 +58,34 @@ class CustomerController extends Controller
      */
     public function show(string $id)
     {
-        //DOES NOT APPLY
+        //DOES NOT APPLY TO JSON API
     }
 
     /**
      * Update the specified resource in storage.
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function update(Request $request, Customer $customer): JsonResponse
     {
-        $validatedData = $request->validate([
+        // Define validation rules for update operation
+        $validationRules = [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:customers,email,' . $customer->id, // Ignore current customer's email
-            'address' => 'string|max:255',
-        ]);
+            'email' => 'required|email|unique:customers,email,' . $customer->id,
+            'address' => 'nullable|string|max:255',
+        ];
 
-        $customer->update($validatedData);
+        $validator = Validator::make($request->all(), $validationRules);
+
+        // If validation fails, return JSON with error
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation error',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Update the customer with validated data
+        $customer->update($validator->validated());
 
         return response()->json($customer);
     }
