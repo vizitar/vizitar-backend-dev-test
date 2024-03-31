@@ -21,7 +21,7 @@ class PurchaseOrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'customer_id' => Customer::factory(), // Assuming the CustomerFactory
+            'customer_id' => Customer::factory(),
             'status' => fake()->randomElement(['Open', 'Paid', 'Canceled']),
             'quantity' => fake()->numberBetween(1, 20),
         ];

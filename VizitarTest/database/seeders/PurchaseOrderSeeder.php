@@ -3,7 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Customer;
+use App\Models\Product;
 use App\Models\PurchaseOrder;
+use App\Models\PurchaseOrderItem;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,25 +16,27 @@ class PurchaseOrderSeeder extends Seeder
      */
     public function run(): void
     {
+        $products = Product::all();
         $customers = Customer::all();
-        $purchaseOrders = PurchaseOrder::all();
 
-        //Iterate through each customer
-        foreach ($customers as $customer){
-            $purchaseOrders = PurchaseOrder::factory(5)->make(); //create fake purchase orders
+        foreach ($customers as $customer) {
+            //Create multiple purchase orders for each customer
+            $purchaseOrders = PurchaseOrder::factory(2)->create([
+                'customer_id' => $customer->id,
+            ]);
 
-            $customer->purchaseOrders()->saveMany($purchaseOrders);
+            //Selecting 3 random products to use in each order
+            $selectedProducts = $products->random(3);
 
-            foreach ($purchaseOrders as $purchaseOrder){
-                //TODO pivot table seeder logic
-
+            foreach ($purchaseOrders as $purchaseOrder) {
+                foreach ($selectedProducts as $product) {
+                    // Attach the product to the purchase order using the pivot table
+                    PurchaseOrderItem::query()->create([
+                        'purchase_order_id' => $purchaseOrder->id,
+                        'product_id' => $product->id,
+                    ]);
+                }
             }
         }
-            /*->each(function ($order) {
-                // Attach products to each purchase order
-                $products = Product::inRandomOrder()->limit(rand(1, 5))->get();
-                $order->products()->attach($products->pluck('id'), ['quantity' => rand(1, 10)]);
-            }));*/
-
     }
 }
