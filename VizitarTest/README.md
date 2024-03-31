@@ -12,12 +12,11 @@ This API provides endpoints for managing customers, products, and purchase order
 ### Installation
 
 1. Install dependencies:
-
    ```bash
    composer install
-
+   ```
+   
 2. Update the `.env` file with your database credentials. Example:
-
    ```dotenv
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
@@ -25,12 +24,18 @@ This API provides endpoints for managing customers, products, and purchase order
    DB_DATABASE=<db_name>
    DB_USERNAME=<username>
    DB_PASSWORD=<password>
-
+   ```
+   
 3. Run the database migrations and seed the database:
-
    ```bash
    php artisan migrate --seed
-
+   ```
+   
+4. Start the server:
+   ```bash
+   php artisan serve
+   ```
+   
 ## API Endpoints
 The following tables list the available API endpoints along with their corresponding HTTP methods and descriptions.
 
@@ -45,9 +50,9 @@ The following tables list the available API endpoints along with their correspon
 #### JSON Request Example
 ```json
 {
-    "name": "John Doe",
-    "email": "john@example.com",
-    "address": "123 Main St"
+    "name": "Dark Link",
+    "email": "link.dark@example.com",
+    "address": "1996 Hyrule Kingdom"
 }
 ```
 
@@ -83,4 +88,22 @@ The following tables list the available API endpoints along with their correspon
     "status": "Open",
     "quantity": 5
 }
+```
+
+### Pagination
+Results are paginated with 10 items per page by default. Use the page query parameter to navigate through pages. For example:
+```bash
+/api/customers?page=2
+```
+
+### Filtering
+You can filter the results by specifying query parameters corresponding to the column names of the respective tables. For example:
+```bash
+/api/customers?name=Ganondorf
+```
+
+### Sorting
+You can sort the results by specifying the sort_by and sort_order query parameters. For example:
+```bash
+/api/customers?sort_by=name&sort_order=asc&page=1
 ```

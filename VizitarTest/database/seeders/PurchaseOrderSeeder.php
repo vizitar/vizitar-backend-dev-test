@@ -16,8 +16,8 @@ class PurchaseOrderSeeder extends Seeder
      */
     public function run(): void
     {
-        $products = Product::all();
         $customers = Customer::all();
+        $products = Product::all();
 
         foreach ($customers as $customer) {
             //Create multiple purchase orders for each customer
@@ -25,12 +25,12 @@ class PurchaseOrderSeeder extends Seeder
                 'customer_id' => $customer->id,
             ]);
 
-            //Selecting 3 random products to use in each order
+            //Selecting 3 random products to use in each order (to simulate a random order)
             $selectedProducts = $products->random(3);
 
             foreach ($purchaseOrders as $purchaseOrder) {
                 foreach ($selectedProducts as $product) {
-                    // Attach the product to the purchase order using the pivot table
+                    //Create purchase order items to associate selected products with the current purchase order
                     PurchaseOrderItem::query()->create([
                         'purchase_order_id' => $purchaseOrder->id,
                         'product_id' => $product->id,
