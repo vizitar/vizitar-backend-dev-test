@@ -2,40 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\DataManipulationService;
 use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 
 class CustomerController extends Controller
 {
+    public function __construct(protected DataManipulationService $dataManipulationService
+    )
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, Customer $customer): JsonResponse
     {
-        $query = Customer::query();
-
-        //Get column names
-        $tableColumns = Schema::getColumnListing('customers');
-
-        //Loop through all columns
-        foreach ($tableColumns as $column) {
-            //Apply filters if a query parameter for the column is provided
-            if ($request->has($column)) {
-                $query->where($column, 'like', '%' . $request->input($column) . '%');
-            }
-        }
-
-        // Apply sorting if provided
-        if ($request->has('sort_by') && $request->has('sort_order')) {
-            $query->orderBy($request->input('sort_by'), $request->input('sort_order'));
-        }
-
-        //Paginate the results
-        $customers = $query->paginate(10);
-
+        //Retrieve filtered, sorted and paginated data
+        $customers = $this->dataManipulationService->filterSortAndPaginate($customer, $request);
         return response()->json($customers);
     }
 

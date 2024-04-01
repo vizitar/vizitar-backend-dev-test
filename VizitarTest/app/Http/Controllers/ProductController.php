@@ -2,36 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\DataManipulationService;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
+    public function __construct(protected DataManipulationService $dataManipulationService
+    )
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, Product $product): JsonResponse
     {
-        $query = Product::query();
-
-        $tableColumns = Schema::getColumnListing('products');
-
-        foreach ($tableColumns as $column) {
-            if ($request->has($column)) {
-                $query->where($column, 'like', '%' . $request->input($column) . '%');
-            }
-        }
-
-        if ($request->has('sort_by') && $request->has('sort_order')) {
-            $query->orderBy($request->input('sort_by'), $request->input('sort_order'));
-        }
-
-        $products = $query->paginate(10);
-
+        $products = $this->dataManipulationService->filterSortAndPaginate($product, $request);
         return response()->json($products);
     }
 

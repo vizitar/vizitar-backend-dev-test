@@ -2,36 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\DataManipulationService;
 use App\Models\PurchaseOrder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class PurchaseOrderController extends Controller
 {
+    public function __construct(protected DataManipulationService $dataManipulationService
+    )
+    {
+    }
+
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request, PurchaseOrder $purchaseOrder): JsonResponse
     {
-        $query = PurchaseOrder::query();
-
-        $tableColumns = Schema::getColumnListing('purchase_orders');
-
-        foreach ($tableColumns as $column) {
-            if ($request->has($column)) {
-                $query->where($column, 'like', '%' . $request->input($column) . '%');
-            }
-        }
-
-        if ($request->has('sort_by') && $request->has('sort_order')) {
-            $query->orderBy($request->input('sort_by'), $request->input('sort_order'));
-        }
-
-        $purchaseOrders = $query->paginate(10);
-
+        $purchaseOrders = $this->dataManipulationService->filterSortAndPaginate($purchaseOrder, $request);
         return response()->json($purchaseOrders);
     }
 
