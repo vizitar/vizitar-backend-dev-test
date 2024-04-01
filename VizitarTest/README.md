@@ -96,6 +96,13 @@ Results are paginated with 10 items per page by default. Use the page query para
 /api/customers?page=2
 ```
 
+- **Changing the Number of Results Per Page** 
+
+    You can specify the number of results per page by using the `per_page` query parameter. The default value is 10 items per page.
+    ```bash
+    /api/customers?per_page=5
+    ```
+
 ### Filtering
 You can filter the results by specifying query parameters corresponding to the column names of the respective tables. For example:
 ```bash
@@ -106,4 +113,9 @@ You can filter the results by specifying query parameters corresponding to the c
 You can sort the results by specifying the sort_by and sort_order query parameters. For example:
 ```bash
 /api/customers?sort_by=name&sort_order=asc&page=1
+```
+
+### Filtering and Sorting can also be combined with pagination. For example:
+```bash
+/api/customers?name=Zelda&sort_by=created_at&sort_order=desc&per_page=8
 ```

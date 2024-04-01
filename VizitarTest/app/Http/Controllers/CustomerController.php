@@ -7,6 +7,7 @@ use App\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class CustomerController extends Controller
 {
@@ -22,6 +23,7 @@ class CustomerController extends Controller
     {
         //Retrieve filtered, sorted and paginated data
         $customers = $this->dataManipulationService->filterSortAndPaginate($customer, $request);
+
         return response()->json($customers);
     }
 
@@ -70,7 +72,7 @@ class CustomerController extends Controller
 
     /**
      * Update the specified resource in storage.
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function update(Request $request, Customer $customer): JsonResponse
     {
